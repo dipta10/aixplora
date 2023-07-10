@@ -3,6 +3,7 @@ from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from typing import List
+from schemas.file import DeleteFileDTO
 from database.database import Database
 from schemas.config import Config
 from schemas.question import Question, Document
@@ -129,6 +130,12 @@ async def upload_files(files: List[UploadFile] = File(...)):
         db.commit()
         print(f"added {file.filename} to db")
     return {"message": "Files uploaded successfully"}
+
+
+@app.delete("/files/")
+async def remove_files(file: DeleteFileDTO):
+    print('remove path called!')
+    return {"message": "Files deleted successfully"}
 
 
 @app.post("/chat/")

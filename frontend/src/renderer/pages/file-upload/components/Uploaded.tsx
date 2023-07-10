@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { createStyles, Table, ScrollArea, rem } from '@mantine/core';
+import { apiCall } from 'renderer/utils/api';
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -21,6 +22,20 @@ const useStyles = createStyles((theme) => ({
           : theme.colors.gray[2]
       }`,
     },
+    'th:nth-child(1)': {
+      width: '3px',
+    },
+  },
+
+  tbody: {
+    'td:nth-child(1)': {
+      button: {
+        border: '1px solid',
+        background:
+          theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+        padding: '5px 10px',
+      },
+    },
   },
 
   scrolled: {
@@ -36,8 +51,20 @@ export default function UploadedTable({ data }: TableScrollAreaProps) {
   const { classes, cx } = useStyles();
   const [scrolled, setScrolled] = useState(false);
 
+  const onClickRemoveFile = async () => {
+    const response = await apiCall('/files/', 'DELETE', {
+      fileId: 'dipta',
+    });
+    console.log('response is', response);
+  };
+
   const rows = data.map((row) => (
     <tr key={row.name}>
+      <td>
+        <button type="button" onClick={onClickRemoveFile}>
+          X
+        </button>
+      </td>
       <td>{row.name}</td>
       <td>{row.type}</td>
       <td>{Math.floor(row.size / 1000)} kb</td>
@@ -52,12 +79,13 @@ export default function UploadedTable({ data }: TableScrollAreaProps) {
       <Table miw={700}>
         <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
           <tr>
+            <th></th>
             <th>name</th>
             <th>type</th>
             <th>size</th>
           </tr>
         </thead>
-        <tbody>{rows}</tbody>
+        <tbody className={classes.tbody}>{rows}</tbody>
       </Table>
     </ScrollArea>
   );
