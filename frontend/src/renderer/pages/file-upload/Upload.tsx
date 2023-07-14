@@ -5,6 +5,7 @@ import {apiCall} from "../../utils/api";
 import {useSelector} from "react-redux";
 
 type FileData = {
+    id?: string;
     name: string;
     type: string;
     size: number;
@@ -42,10 +43,20 @@ export function Upload() {
         });
     }, []);
 
+    const onClickDeleteFile = async (id: string) => {
+        try {
+            await apiCall(`/files/${id}`, 'DELETE', {});
+            setFiles(p => p.filter(f => f.id !== id));
+        } catch (e) {
+            // todo: add notification once implemented
+            console.log('something went wrong', e);
+        }
+    };
+
     return (
         <div>
             <DropzoneButton/>
-            <UploadedTable data={files}/>
+            <UploadedTable data={files} onClickDeleteRow={onClickDeleteFile}/>
         </div>
     );
 }

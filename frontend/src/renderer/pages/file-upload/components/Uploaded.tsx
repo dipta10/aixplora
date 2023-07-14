@@ -44,24 +44,21 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface TableScrollAreaProps {
-  data: { name: string; type: string; size: number }[];
+  data: { id: string; name: string; type: string; size: number }[];
+  onClickDeleteRow: (id: string) => any;
 }
 
-export default function UploadedTable({ data }: TableScrollAreaProps) {
+export default function UploadedTable({
+  data,
+  onClickDeleteRow,
+}: TableScrollAreaProps) {
   const { classes, cx } = useStyles();
   const [scrolled, setScrolled] = useState(false);
 
-  const onClickRemoveFile = async () => {
-    const response = await apiCall('/files/', 'DELETE', {
-      fileId: 'dipta',
-    });
-    console.log('response is', response);
-  };
-
   const rows = data.map((row) => (
-    <tr key={row.name}>
+    <tr key={row.id}>
       <td>
-        <button type="button" onClick={onClickRemoveFile}>
+        <button type="button" onClick={() => onClickDeleteRow(row.id)}>
           X
         </button>
       </td>

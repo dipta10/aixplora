@@ -90,7 +90,7 @@ def get_files():
         res = []
         if files is not None:
             for file in files:
-                res.append({"name": file[1], "type": file[2], "size": file[3]})
+                res.append({"id": file[0], "name": file[1], "type": file[2], "size": file[3]})
         else:
             return {"error": "No files found."}
         print(res)
@@ -132,9 +132,14 @@ async def upload_files(files: List[UploadFile] = File(...)):
     return {"message": "Files uploaded successfully"}
 
 
-@app.delete("/files/")
-async def remove_files(file: DeleteFileDTO):
-    print('remove path called!')
+@app.delete("/files/{file_id}")
+async def remove_files(file_id: str):
+    from database.models.files import File
+    db = Database().get_session()
+    db.execute(text("DELETE FROM files where id = :file_id"),
+               {"file_id": file_id})
+    db.commit()
+
     return {"message": "Files deleted successfully"}
 
 
